@@ -6,25 +6,26 @@ import {collections} from '../lib/collection-names'
 
 export default function MapNew() {
   const [bubble, setBubble] = useState({ visible: false, position: [0, 0], text: '' });
-  const [requests, setRequests] = useState([])
+  const [records, setRecords] = useState([])
 
   const handleMarkerClick = (position, text, queryStr) => {
-    if (bubble.visible && bubble.position[0] === position[0]) {
-      // If the same marker is clicked again, hide the bubble
-      setBubble({ visible: false, position: [0, 0], text: '' });
-    } else {
-      // Otherwise, show the bubble with the new position and text
-      setBubble({ visible: true, position, text });
-
       //call API after showing results? for now.
       //TODO: replace this with a LoadingCircle while the API is fetching then rendering data
       getRecords(queryStr)
+
+    if (bubble.visible && bubble.position[0] === position[0]) {
+      // If the same marker is clicked again, hide the bubble
+      setBubble({ visible: false, position: [0, 0], text: '' });
+      setRecords([]) //set to empty so it can be repopulated
+    } else {
+      // Otherwise, show the bubble with the new position and text
+      setBubble({ visible: true, position, text });
     }
   }
 
   function dataHelper(data) { //relying on state in getData does not work because of state's delayed updating
-    console.log(`helper data print: ${data}`)
-    setRequests(data)
+    console.log(`helper data print: ${data[0]}`)
+    setRecords(data[0])
   }
 
   const getRecords = async (bubbleName) => {
@@ -101,7 +102,12 @@ export default function MapNew() {
       {bubble.visible && (
         <Overlay anchor={bubble.position} offset={[0, 0]}>
           <div style={bubbleStyle}>
-            {bubble.text}
+            <p><strong>{bubble.text}</strong></p>    
+            <p>Utilities: {records.utilityCompany}</p>
+            {/* <p>Housing: {records.housing}</p> */}
+            <p>Tax Incentives: {records.taxCredit.Status=='Yes' && (records.taxCredit.Type[0])}</p>
+            <p>Workshops Offered: {records.Workshops.Status=='Yes' && (records.Workshops.Type[0])}</p>
+
           </div>
         </Overlay>
       )}
@@ -117,3 +123,19 @@ const bubbleStyle = {
   whiteSpace: 'nowrap',
   color: 'black',
 };
+
+// {records.map(r => (
+//   <>
+//   <p>Utilities: {records.utilityCompany}</p>
+//   <p>Housing: {records.housing}</p>
+//   {/* per each tax credit item, render one */}
+//   {(r.taxCredit.Status==='Yes') && taxCredit.map(t => (
+//   <p>TC Type: {t.Type}</p>
+//   ))} {/* END TAX CREDIT RENDER */}
+
+//   {/* do the same w workshops */}
+//   {(r.Workshops.Status==='Yes') && Workshops.map(w => (
+//   <p>WKS Type: {w.Type}</p>
+//   ))} {/* END WORKSHOPS RENDER */}
+//   </>
+// ))} {/* END MAIN RECORDS R RENDER */}
