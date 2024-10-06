@@ -4,12 +4,16 @@ import { useState } from "react"
 import { Button, Typography } from "@mui/joy";
 import {collections} from '../lib/collection-names'
 import styles from '@/styles/map.module.css'
+import { Container, FormControl, FormLabel, Input, Select, Option, Radio, RadioGroup } from "@mui/joy";
+
 
 export default function MapNew() {
   const [bubble, setBubble] = useState({ visible: false, position: [0, 0], text: '' });
   const [records, setRecords] = useState([])
   const [taxIncentive, setTaxIncentive] = useState('')
   const [workshop, setWorkshop] = useState('')
+
+  const [buttonOpen, setOpen] = useState(false)
 
   const handleMarkerClick = (position, text, queryStr) => {
       //call API after showing results? for now.
@@ -103,7 +107,7 @@ export default function MapNew() {
           size="lg"
           variant="solid"
           color="success"
-          onClick={() => console.log("Survey Button Clicked")}
+          onClick={() => {console.log("Survey Button Clicked"); setOpen(true)}}
         >
           Take Survey
         </Button>
@@ -123,6 +127,65 @@ export default function MapNew() {
         </Overlay>
       )}
     </Map>
+
+    {buttonOpen && (
+      <form style={{zIndex:99, position:'absolute', left:'10', top:'10%', backgroundColor:'white', padding:'2rem', borderRadius:'10px',   border: '2px solid forestgreen'}}>
+      <Container maxWidth="sm">
+        <Button variant="outlined" color="success" sx={{float:'right'}} onClick={() => {setOpen(false)}}>X</Button>
+          <h3 style={{marginBottom:'1rem'}}>Home Assessment Form</h3>
+          <FormControl sx={{marginBottom:'1rem'}}>
+              <FormLabel>Household Size</FormLabel>
+              <Input sx={{maxWidth:'100px'}}/>
+          </FormControl>
+
+          <FormControl sx={{marginBottom:'1rem'}}>
+              <FormLabel>Household Type</FormLabel>
+              <Select
+              labelId="home-type-label"
+              name="homeType"
+              variant="outlined"
+              // sx={{ fontSize: '2rem', height: '60px'}}
+            >
+              <Option value=""><em>None</em></Option>
+              <Option value="Apartment">Apartment</Option>
+              <Option value="Single Family Home">Single Family Home</Option>
+              <Option value="Townhouse">Townhouse</Option>
+              <Option value="Condo">Condo</Option>
+              <Option value="Mobile Home">Mobile Home</Option>
+              <Option value="Other">Other</Option>
+            </Select>
+          </FormControl>
+
+          <FormControl sx={{marginBottom:'1rem'}}>
+              <FormLabel>Describe your understanding of home energy consumption.</FormLabel>
+              <Input/>
+          </FormControl>
+
+          <FormControl sx={{marginBottom:'1rem'}}>
+              <FormLabel>What is your primary source of energy? (Gas, Solar, etc)</FormLabel>
+              <Input/>
+          </FormControl>
+
+          <FormControl sx={{marginBottom:'1rem'}}>
+              <FormLabel>Are you interested in exploring renewable energy options for your home?</FormLabel>
+              <RadioGroup defaultValue="outlined" name="radio-buttons-group">
+                <Radio value="Yes" label="Yes"/>
+                <Radio value="No" label="No"/>
+              </RadioGroup>
+          </FormControl>
+
+          <FormControl sx={{marginBottom:'1rem'}}>
+              <FormLabel>Are you interested in educational workshops in your county?</FormLabel>
+              <RadioGroup defaultValue="outlined" name="radio-buttons-group">
+                <Radio value="Yes" label="Yes"/>
+                <Radio value="No" label="No"/>
+              </RadioGroup>
+          </FormControl>
+
+          <Button color="success" onClick={() => {alert('Coming Soon!\nYour responses will help us improve our services.')}}>Submit</Button>
+      </Container>
+      </form>
+    )}
     </>
   );
 }
@@ -131,6 +194,7 @@ const bubbleStyle = {
   backgroundColor: 'white',
   padding: '5px 10px',
   borderRadius: '5px',
+  border: '2px solid forestgreen',
   boxShadow: '0 0 10px rgba(0,0,0,0.1)',
   whiteSpace: 'nowrap',
   color: 'black',

@@ -45,10 +45,10 @@ export default function Home() {
           Our Hackathon Goal
         </Typography>
         <Typography variant="body1" sx={{ fontSize: '1rem', marginBottom: '20px' }}>
-          Working with 10 different counties in Florida, we created datasets to provide a snapshot of our <strong>visualization goal</strong>.
+          VisuWatt <em>is a web application that seeks to educate <strong>homeowners</strong> on energy consumption and the resources available to them to further that goal</em>. Working with 10 different counties in Florida, we created datasets to provide a snapshot of our <strong>visualization goal</strong>.
           We wanted to create something scalable, aiming to integrate official datasets in the future.
-          This would help homeowners take advantage of <strong>local workshops</strong>, <strong>incentives</strong>, or <strong>more awareness</strong> on what affects their utilities.
-          We also created a survey in order to collect data from homeowners and the community.
+          This would help homeowners take advantage of <strong>local workshops</strong>, <strong>incentives</strong>, or <strong>bring more awareness</strong> to what affects their utilities.
+          We also created a survey in order to collect data from homeowners.
           In giving companies this data, they would be able to make <strong>informed decision</strong> on how best to support their commmunities.
         </Typography>
         </div>
