@@ -7,6 +7,8 @@ import {collections} from '../lib/collection-names'
 export default function MapNew() {
   const [bubble, setBubble] = useState({ visible: false, position: [0, 0], text: '' });
   const [records, setRecords] = useState([])
+  const [taxIncentive, setTaxIncentive] = useState('')
+  const [workshop, setWorkshop] = useState('')
 
   const handleMarkerClick = (position, text, queryStr) => {
       //call API after showing results? for now.
@@ -26,6 +28,8 @@ export default function MapNew() {
   function dataHelper(data) { //relying on state in getData does not work because of state's delayed updating
     console.log(`helper data print: ${data[0]}`)
     setRecords(data[0])
+    setTaxIncentive(data[0].taxCredit.Type[0])
+    setWorkshop(data[0].Workshops.Type[0])
   }
 
   const getRecords = async (bubbleName) => {
@@ -103,10 +107,10 @@ export default function MapNew() {
         <Overlay anchor={bubble.position} offset={[0, 0]}>
           <div style={bubbleStyle}>
             <p><strong>{bubble.text}</strong></p>    
-            <p>Utilities: {records.utilityCompany}</p>
+            <p><strong>Utilities:</strong> {records.utilityCompany}</p>
             {/* <p>Housing: {records.housing}</p> */}
-            <p>Tax Incentives: {records.taxCredit.Status=='Yes' && (records.taxCredit.Type[0])}</p>
-            <p>Workshops Offered: {records.Workshops.Status=='Yes' && (records.Workshops.Type[0])}</p>
+            <p><strong>Main Tax Incentives:</strong> {taxIncentive}</p>
+            <p><strong>Workshop Offered:</strong> {workshop}</p>
 
           </div>
         </Overlay>
