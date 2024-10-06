@@ -6,22 +6,19 @@ export default function APITest(){
   const [county, setCounty] = useState('')
   const [requests, setRequests] = useState([])
 
-  function dataHelper(requests){ //relying on state in getData does not work because of state's delayed updating
-    // console.log(results)
-      setRequests(requests)
+  function dataHelper(data){ //relying on state in getData does not work because of state's delayed updating
+    console.log(`helper data print: ${data}`)
+      setRequests(data)
     }
 
   const handleChange = (event, newValue) => {
     setCounty(newValue)
   };
   
-  function test(){
-    console.log('hi')
-  }
 
   const getRequests = async () => {
     // try {
-      const req = await fetch(`/api/get-all-records?county=${county}`, {
+      const req = await fetch(`/api/find-record-from-county?county=${county}`, {
         method: "GET",
         headers: {
           Accept: 'application/json',
@@ -30,9 +27,7 @@ export default function APITest(){
       })
         .then((res) => {
           if(!res.ok){
-            console.log('Check Internet Connection')
-            // setMatchEmpty(true)
-            // setRequestFail(true)
+            console.log('API ERROR')
             return null;
           }
           else {
