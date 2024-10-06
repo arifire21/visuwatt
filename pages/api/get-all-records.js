@@ -2,8 +2,10 @@ import db from '@/lib/mongodb'
 
 export default async (req, res) => {
   try {
-    const collection = db.collection('COLLECTION NAME HERE')
-
+    const county = req.query.county;
+    console.log(county)
+    const collection = db.collection(county)
+    
     const records = await collection.find({}).toArray()
 
     res.status(200).json(records)

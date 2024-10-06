@@ -1,50 +1,52 @@
 import { Button, Select, Option } from "@mui/joy";
 import { useState } from "react";
+import { useEffect } from "react";
 
 export default function APITest(){
   const [county, setCounty] = useState('')
   const [requests, setRequests] = useState([])
 
+  function dataHelper(requests){ //relying on state in getData does not work because of state's delayed updating
+    // console.log(results)
+      setRequests(requests)
+    }
+
   const handleChange = (event, newValue) => {
     setCounty(newValue)
   };
+  
+  function test(){
+    console.log('hi')
+  }
 
-  const getRequests = async (countyReq) => {
-    try {
-      const req = await fetch(`/api/requests/get-all-records?county=${countyReq}`, {
+  const getRequests = async () => {
+    // try {
+      const req = await fetch(`/api/get-all-records?county=${county}`, {
         method: "GET",
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json',
         }
       })
-
-      if (!req.ok) {
-        console.error('Error fetching requests:', req.status, req.statusText)
-        return []
-      }
-
-      return await req.json()
-      .then((data) => {matchDataHelper(data.results)})
-    }
-    
-    catch (e) {
-      console.error("An error occurred trying to fetch the request:", e)
-      return [] // Return empty array when an error occurs
-    }
+        .then((res) => {
+          if(!res.ok){
+            console.log('Check Internet Connection')
+            // setMatchEmpty(true)
+            // setRequestFail(true)
+            return null;
+          }
+          else {
+            return res.json() // Parse the response data as JSON
+          }
+        }) 
+        .then((data) => {dataHelper(data)})
+        .catch( err => console.log(err) );
   }
-  
-    // useEffect(() => {
-    //   getRequests()
-    //     .then((requests) => setRequests(requests))
-    //     .catch((error) => {
-    //       console.error("Error checking for existing request:", error)
-    //     })
-    // },[]) // Empty dependency array ensures the effect runs once on mount
+
 
     return(
       <>
-      <Select onChange={handleChange}>
+      <Select onChange={handleChange} sx={{maxWidth:'500px'}}>
         <Option value="Broward">Broward</Option>
         <Option value="Franklin">Franklin</Option>
         <Option value="Hillsborough">Hillsborough</Option>
@@ -56,7 +58,7 @@ export default function APITest(){
         <Option value="Union">Union</Option>
       </Select>
 
-        <Button disabled={county==='' ? true : false} onclick={() => {getRequests(county)}}>Get All Records for {county ?? '[select a county first]'}</Button>
+        <Button disabled={county==='' ? true : false} onClick={getRequests}>Get All Records for {county}</Button>
         </>
     )
 }
