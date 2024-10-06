@@ -1,8 +1,9 @@
 import { Map, Marker, Overlay } from "pigeon-maps"
 import Image from 'next/image'
 import { useState } from "react"
-import { Button } from "@mui/joy";
+import { Button, Typography } from "@mui/joy";
 import {collections} from '../lib/collection-names'
+import styles from '@/styles/map.module.css'
 
 export default function MapNew() {
   const [bubble, setBubble] = useState({ visible: false, position: [0, 0], text: '' });
@@ -55,6 +56,11 @@ export default function MapNew() {
   }
 
   return (
+    <>
+      <Typography className={styles.pageTitle} variant="h1" component="h1" gutterBottom>
+        Energy Map
+      </Typography>
+
     <Map height={700} defaultCenter={[27.9659, -82.7959]} defaultZoom={7} zoom={7} mouseEvents={false} touchEvents={false}>
       {/* Orange County */}
       <Marker width={50} anchor={[28.5384, -81.3789]} color={'red'} onClick={() => handleMarkerClick([28.5384, -81.3789], "Orange County", collections[7])} />
@@ -94,6 +100,7 @@ export default function MapNew() {
       {/* Survey Button */}
       <Overlay anchor={[27.0, -86.8833]} offset={[0, 0]}>
         <Button
+          size="lg"
           variant="solid"
           color="success"
           onClick={() => console.log("Survey Button Clicked")}
@@ -106,16 +113,17 @@ export default function MapNew() {
       {bubble.visible && (
         <Overlay anchor={bubble.position} offset={[0, 0]}>
           <div style={bubbleStyle}>
-            <p><strong>{bubble.text}</strong></p>    
+            <p style={{textAlign:'center'}}><strong>{bubble.text}</strong></p>    
             <p><strong>Utilities:</strong> {records.utilityCompany}</p>
             {/* <p>Housing: {records.housing}</p> */}
+            <p><strong><small>Usage per Household Annually: </small></strong>{records.power} kWh</p>
             <p><strong>Main Tax Incentives:</strong> {taxIncentive}</p>
             <p><strong>Workshop Offered:</strong> {workshop}</p>
-
           </div>
         </Overlay>
       )}
     </Map>
+    </>
   );
 }
 
