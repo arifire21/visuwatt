@@ -1,7 +1,8 @@
 import { Map, Marker, Overlay } from "pigeon-maps"
 import Image from 'next/image'
+import Head from "next/head";
 import { useState } from "react"
-import { Button, Typography } from "@mui/joy";
+import { Button, Typography, CircularProgress } from "@mui/joy";
 import {collections} from '../lib/collection-names'
 import styles from '@/styles/map.module.css'
 import { Container, FormControl, FormLabel, Input, Select, Option, Radio, RadioGroup } from "@mui/joy";
@@ -12,6 +13,9 @@ export default function MapNew() {
   const [records, setRecords] = useState([])
   const [taxIncentive, setTaxIncentive] = useState('')
   const [workshop, setWorkshop] = useState('')
+
+  const [dataNull, setDataNull] = useState(false)
+  const [isLoading, setLoading] = useState(false)
 
   const [buttonOpen, setOpen] = useState(false)
 
@@ -30,14 +34,23 @@ export default function MapNew() {
     }
   }
 
-  function dataHelper(data) { //relying on state in getData does not work because of state's delayed updating
+  function dataHelper(data) {
+    if(data == null){
+      setDataNull(true)
+      setLoading(false)
+      return false;
+    }
+    //relying on state in getData does not work because of state's delayed updating
     console.log(`helper data print: ${data[0]}`)
     setRecords(data[0])
     setTaxIncentive(data[0].taxCredit.Type[0])
     setWorkshop(data[0].Workshops.Type[0])
+    setLoading(false)
+    return true;
   }
 
   const getRecords = async (bubbleName) => {
+    setLoading(true);
     // try {
     const req = await fetch(`/api/find-record-from-county?county=${bubbleName}`, {
       method: "GET",
@@ -61,6 +74,9 @@ export default function MapNew() {
 
   return (
     <>
+      <Head>
+      <title>Map - VisuWatt</title>
+      </Head>
       <Typography className={styles.pageTitle} variant="h1" component="h1" gutterBottom>
         Energy Map
       </Typography>
@@ -117,12 +133,24 @@ export default function MapNew() {
       {bubble.visible && (
         <Overlay anchor={bubble.position} offset={[0, 0]}>
           <div style={bubbleStyle}>
-            <p style={{textAlign:'center'}}><strong>{bubble.text}</strong></p>    
-            <p><strong>Utilities:</strong> {records.utilityCompany}</p>
-            {/* <p>Housing: {records.housing}</p> */}
-            <p><strong><small>Usage per Household Annually: </small></strong>{records.power} kWh</p>
-            <p><strong>Main Tax Incentives:</strong> {taxIncentive}</p>
-            <p><strong>Workshop Offered:</strong> {workshop}</p>
+            <p style={{textAlign:'center'}}><strong>{bubble.text}</strong></p>
+            {isLoading==true ? //is loading true?
+            //if true, render the loading text
+              <div style={{display:'flex', textAlign:'center'}}>
+                <p>Loading...</p>
+              </div>
+            //if false, check if the API returned data
+            //if dataNull is still true? return the error message
+            : (dataNull== true ? <p>API Error!</p> : (
+              //: = null is false, data was found so display it
+              <>
+              <p><strong>Utilities:</strong> {records.utilityCompany}</p>
+              {/* <p>Housing: {records.housing}</p> */}
+              <p><strong><small>Usage per Household Annually: </small></strong>{records.power} kWh</p>
+              <p><strong>Main Tax Incentives:</strong> {taxIncentive}</p>
+              <p><strong>Workshop Offered:</strong> {workshop}</p>
+              </>
+            ))}
           </div>
         </Overlay>
       )}
