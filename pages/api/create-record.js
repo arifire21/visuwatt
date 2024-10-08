@@ -1,4 +1,4 @@
-import db from '@/lib/mongodb'
+import db from '@/lib/connect'
 export default async (req, res) => {
   try {
     //REPLACE WITH FIELDS WE ARE USING
